@@ -3,6 +3,7 @@
 """
 
 from distutils.core import setup
+from setuptools import find_packages
 
 setup(
     name='python-gdrive',
@@ -12,7 +13,7 @@ setup(
     url='https://github.com/tsanch3z/python-gdrive',
     download_url='https://github.com/tsanch3z/python-gdrive/archive/master.zip',
     description='Gdrive REST api client',
-    packages=['python_gdrive'],
+    packages=find_packages(exclude=['tests']),
     license='GPLv2',
     platforms='OS Independent',
     classifiers=[
