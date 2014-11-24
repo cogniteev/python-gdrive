@@ -72,7 +72,7 @@ class GoogleDrive(object):
         else:
             return response
 
-    def download_content(self, url, refreshed=False):
+    def download(self, url, refreshed=False):
         """ download a file content
 
         :param url: the url to download the file from
@@ -81,15 +81,15 @@ class GoogleDrive(object):
         """
         headers = self.__token_header()
 
-        response = requests.request('get', url, headers=headers)
+        response = requests.request('get', url, headers=headers, stream=True)
 
         if response.status_code == 401:
             if refreshed:
-                return response.content
+                return response
             self.__refresh_token()
-            return self.download_content(url, refreshed=True)
+            return self.download(url, refreshed=True)
         else:
-            return response.content
+            return response
 
     def get_user_files(self, count=100, page_token=None):
         """ Retrieve user's files metadata
