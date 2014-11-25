@@ -1,0 +1,9 @@
+v 0.2
+-------
+
+* Add streaming support for file downloads (tuxnco)
+
+v 0.1
+-------
+
+* Initial working version
