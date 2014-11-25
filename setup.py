@@ -7,7 +7,7 @@ from setuptools import find_packages
 
 setup(
     name='python-gdrive',
-    version='0.1',
+    version='0.2',
     author='Tony Sanchez',
     author_email='mail.tsanchez@gmail.com',
     url='https://github.com/tsanch3z/python-gdrive',
