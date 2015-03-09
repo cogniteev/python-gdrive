@@ -115,7 +115,7 @@ class GoogleDrive(object):
             response = self.get_user_files(count=count,
                                            page_token=next_page_token).json()
             next_page_token = response.get('nextPageToken', None)
-            for item in response['items']:
+            for item in response.get('items', []):
                 yield item
 
             if not next_page_token:
