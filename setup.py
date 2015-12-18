@@ -3,11 +3,20 @@
 """
 
 from distutils.core import setup
+import os.path as osp
 from setuptools import find_packages
+
+
+__version__ = None
+with open(osp.join('python_gdrive', '__init__.py')) as istr:
+    for l in istr:
+        if l.startswith('__version__ = '):
+            exec(l)
+            break
 
 setup(
     name='python-gdrive',
-    version='0.2',
+    version=__version__,
     author='Tony Sanchez',
     author_email='mail.tsanchez@gmail.com',
     url='https://github.com/tsanch3z/python-gdrive',
