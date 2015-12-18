@@ -1,4 +1,9 @@
+import logging
+
 import requests
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class GoogleDrive(object):
@@ -72,11 +77,17 @@ class GoogleDrive(object):
         else:
             return response
 
-    def download(self, url, refreshed=False):
+    def download(self, url, refreshed=False, file_id=None):
         """ download a file content
 
-        :param url: the url to download the file from
-        :param refreshed: True if the call is made after a token refresh
+        :param str url:
+          the url to download the file from
+        :param bool refreshed:
+          True if the call is made after a token refresh
+        :param str file_id:
+          optional file identifier used to retrieve a new download url when
+          the one specified has expired.
+
         :return: file's content
         """
         headers = self.__token_header()
@@ -88,8 +99,33 @@ class GoogleDrive(object):
                 return response
             self.__refresh_token()
             return self.download(url, refreshed=True)
-        else:
-            return response
+
+        if response.status_code == 403 and file_id is not None:
+            # downloadUrl link has expired, get a new one
+            file_desc = self.get_file(file_id)
+            if file_desc.status_code == 200:
+                return self.download(
+                    file_desc.json().get('downloadUrl'),
+                    file_id=None,
+                    refreshed=refreshed
+                )
+            else:
+                msg = (u'Could not retrieve file description: {file_id}'
+                       ': {status_code} {response}')
+                LOGGER.error(msg.format(
+                    file_id=file_id,
+                    status_code=file_desc.status_code,
+                    response=file_desc.text
+                ))
+        return response
+
+    def get_file(self, file_id):
+        """ Retrieve file description
+
+        :param str file_id: file identifier
+        :return: Server's raw response
+        """
+        return self.__request('get', u'files/{}'.format(file_id))
 
     def get_user_files(self, count=100, page_token=None):
         """ Retrieve user's files metadata
@@ -152,5 +188,3 @@ class GoogleDrive(object):
 
             if not next_page_token:
                 break
-
-
